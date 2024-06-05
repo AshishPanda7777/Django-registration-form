@@ -60,12 +60,6 @@ def user_login(request):
         else:
             return HttpResponse('Invalid Credentials')
 
-
-
-
-
-
-
     return render(request,'user_login.html')
 
 
@@ -73,3 +67,28 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('home'))
+
+
+@login_required
+def profile_display(request):
+    username=request.session.get('username')
+    UO=User.objects.get(username=username)
+    PO=Profile.objects.get(username=UO)
+    d={'UO':UO,'PO':PO}
+    return render(request,'profile_display.html',d)
+
+
+@login_required
+def change_password(request):
+    if request.method=='POST':
+        username=request.session.get('username')
+        UO=User.objects.get(username=username)
+        nw=request.POST['nw']
+        UO.set_password(nw)
+        UO.save()
+        return HttpResponse('Password Changed Successfully')
+
+
+    return render(request,'change_password.html')
+
+
